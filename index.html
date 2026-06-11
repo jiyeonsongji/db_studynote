@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DB 벼락치기 7~10장</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Noto Sans KR', system-ui, sans-serif; background: #fff; color: #111; font-size: 14px; line-height: 1.5; }
+
+/* Layout */
+.wrap { display: flex; }
+nav { width: 180px; min-width: 180px; position: sticky; top: 0; height: 100vh; overflow-y: auto; border-right: 1px solid #ddd; padding: 16px 0; background: #fafafa; }
+main { flex: 1; max-width: 860px; padding: 32px 40px; }
+
+/* Nav */
+nav a { display: block; padding: 6px 16px; font-size: 13px; color: #555; text-decoration: none; border-left: 2px solid transparent; }
+nav a:hover, nav a.active { color: #111; border-left-color: #111; font-weight: 600; }
+nav .nav-ch { font-weight: 700; color: #111; font-size: 12px; padding: 12px 16px 4px; text-transform: uppercase; letter-spacing: .05em; }
+nav .nav-sub { padding-left: 28px; font-size: 12px; color: #888; }
+
+/* Chapter */
+.ch { padding-bottom: 48px; border-bottom: 2px solid #111; margin-bottom: 48px; }
+.ch:last-child { border-bottom: none; }
+.ch-title { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+.ch-sub { color: #666; font-size: 13px; margin-bottom: 24px; }
+
+/* Section */
+h2 { font-size: 15px; font-weight: 700; margin: 28px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #ddd; display: flex; align-items: center; gap: 8px; }
+h3 { font-size: 13px; font-weight: 700; margin: 16px 0 8px; color: #333; }
+
+/* Table */
+.t { width: 100%; border-collapse: collapse; margin: 8px 0 16px; font-size: 13px; }
+.t th { background: #111; color: #fff; padding: 7px 10px; text-align: left; font-weight: 600; }
+.t td { padding: 7px 10px; border-bottom: 1px solid #e8e8e8; vertical-align: top; }
+.t tr:last-child td { border-bottom: none; }
+.t tr:nth-child(even) td { background: #fafafa; }
+
+/* Code */
+code { font-family: 'JetBrains Mono','D2Coding',monospace; background: #f2f2f2; padding: 1px 5px; border-radius: 3px; font-size: 12px; }
+pre { background: #f4f4f4; border: 1px solid #ddd; border-radius: 4px; padding: 14px; margin: 8px 0 16px; overflow-x: auto; font-family: 'JetBrains Mono','D2Coding',monospace; font-size: 12px; line-height: 1.7; }
+.kw { color: #000; font-weight: 700; }
+.cm { color: #888; }
+.str { color: #555; }
+
+/* Callout */
+.warn { background: #fff5f5; border-left: 3px solid #c00; padding: 10px 14px; margin: 8px 0 16px; font-size: 13px; }
+.tip  { background: #f5f5f5; border-left: 3px solid #555; padding: 10px 14px; margin: 8px 0 16px; font-size: 13px; }
+.warn strong, .warn .r { color: #c00; }
+
+/* Chips */
+.chip { display: inline-block; border: 1px solid #ddd; border-radius: 3px; padding: 1px 6px; font-size: 11px; font-weight: 700; margin-right: 4px; color: #555; }
+.chip.hot { border-color: #c00; color: #c00; }
+
+/* Quick nav bar */
+.qnav { position: sticky; top: 0; background: #fff; border-bottom: 1px solid #ddd; display: flex; gap: 4px; padding: 8px 40px; z-index: 50; flex-wrap: wrap; }
+.qnav a { font-size: 12px; font-weight: 700; padding: 4px 10px; border: 1px solid #ddd; border-radius: 3px; text-decoration: none; color: #444; }
+.qnav a:hover { background: #111; color: #fff; border-color: #111; }
+
+/* Grid */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 8px 0 16px; }
+@media(max-width:600px){ .grid2 { grid-template-columns: 1fr; } }
+.box { border: 1px solid #ddd; border-radius: 4px; padding: 12px; }
+.box h4 { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+
+/* Final table */
+.final td:first-child { font-weight: 700; white-space: nowrap; }
+.final td:last-child { color: #c00; font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- NAV -->
+<nav>
+  <div class="nav-ch">7장 집계</div>
+  <a href="#g7-groupby" class="nav-sub">GROUP BY</a>
+  <a href="#g7-agg" class="nav-sub">집계함수</a>
+  <a href="#g7-rollup" class="nav-sub">WITH ROLLUP</a>
+  <a href="#g7-having" class="nav-sub">HAVING</a>
+  <div class="nav-ch">8장 조인</div>
+  <a href="#g8-inner" class="nav-sub">INNER JOIN</a>
+  <a href="#g8-outer" class="nav-sub">OUTER JOIN</a>
+  <a href="#g8-etc" class="nav-sub">CROSS/NATURAL</a>
+  <a href="#g8-union" class="nav-sub">UNION</a>
+  <div class="nav-ch">9장 서브쿼리</div>
+  <a href="#g9-types" class="nav-sub">위치별 분류</a>
+  <a href="#g9-scalar" class="nav-sub">스칼라</a>
+  <a href="#g9-derived" class="nav-sub">파생 테이블</a>
+  <a href="#g9-lateral" class="nav-sub">LATERAL ★</a>
+  <a href="#g9-where" class="nav-sub">WHERE절</a>
+  <div class="nav-ch">10장 DML</div>
+  <a href="#g10-insert" class="nav-sub">INSERT</a>
+  <a href="#g10-update" class="nav-sub">UPDATE</a>
+  <a href="#g10-delete" class="nav-sub">DELETE</a>
+  <a href="#g10-tran" class="nav-sub">트랜잭션 ★</a>
+  <div class="nav-ch">암기표</div>
+  <a href="#final">⚡ 최종정리</a>
+</nav>
+
+<!-- MAIN -->
+<main>
+<div class="qnav">
+  <a href="#ch7">7장 집계</a>
+  <a href="#ch8">8장 조인</a>
+  <a href="#ch9">9장 서브쿼리</a>
+  <a href="#ch10">10장 DML</a>
+  <a href="#final">⚡ 암기표</a>
+</div>
+
+<!-- ═══════════ CH7 ═══════════ -->
+<div class="ch" id="ch7">
+<div class="ch-title">7장 — 집계 쿼리</div>
+<div class="ch-sub">GROUP BY · 집계함수 · WITH ROLLUP · HAVING</div>
+
+<h2 id="g7-groupby">GROUP BY</h2>
+<div class="warn">
+  <strong>SELECT에 올 수 있는 것</strong>: GROUP BY에 쓴 칼럼 + 집계함수만<br>
+  GROUP BY에 없는 일반 칼럼 → <strong class="r">오류 or 엉뚱한 값</strong>
+</div>
+<table class="t">
+  <tr><th>문법 포인트</th><th>예시</th></tr>
+  <tr><td>칼럼 순번 사용 가능</td><td><code>GROUP BY 1, 2</code> (= 첫째, 둘째 칼럼)</td></tr>
+  <tr><td>표현식도 가능</td><td><code>GROUP BY SUBSTRING(district,1,2)</code></td></tr>
+  <tr><td>DISTINCT와 차이</td><td>DISTINCT = 중복 제거만 / GROUP BY = 집계함수와 함께</td></tr>
+</table>
+
+<h2 id="g7-agg">집계 함수 <span class="chip hot">★</span></h2>
+<table class="t">
+  <tr><th>함수</th><th>의미</th><th>NULL 처리</th></tr>
+  <tr><td><code>COUNT(*)</code></td><td>전체 행 수</td><td>NULL 포함</td></tr>
+  <tr><td><code>COUNT(칼럼)</code></td><td>값 있는 행 수</td><td><strong>NULL 제외!</strong></td></tr>
+  <tr><td><code>COUNT(DISTINCT 칼럼)</code></td><td>중복 제거 후 개수</td><td>NULL 제외</td></tr>
+  <tr><td><code>SUM / AVG / MAX / MIN</code></td><td>합·평균·최대·최소</td><td>AVG도 NULL 제외</td></tr>
+  <tr><td><code>VAR_POP / STDDEV_POP</code></td><td>분산·표준편차</td><td>—</td></tr>
+</table>
+
+<h2 id="g7-rollup">WITH ROLLUP <span class="chip hot">★ 시험</span></h2>
+<div class="grid2">
+  <div class="box">
+    <h4>동작</h4>
+    GROUP BY 뒤에 붙이면<br>
+    소계 + <strong>총계 행 자동 추가</strong><br>
+    총계 행의 칼럼 값 = <strong>NULL</strong>
+  </div>
+  <div class="box">
+    <h4>GROUPING() 함수</h4>
+    총계 행 구분할 때 사용<br>
+    반환 <strong>1</strong> = 총계 행<br>
+    반환 <strong>0</strong> = 일반 집계 행
+  </div>
+</div>
+<pre><code><span class="kw">GROUP BY</span> movie_type <span class="kw">WITH ROLLUP</span>
+<span class="cm">-- NULL 대신 '전체합계' 표시</span>
+<span class="kw">SELECT</span> IF(GROUPING(movie_type)=1, '전체합계', movie_type), SUM(sale_amt)
+<span class="kw">FROM</span> box_office <span class="kw">WHERE YEAR</span>(release_date)=2019
+<span class="kw">GROUP BY</span> movie_type <span class="kw">WITH ROLLUP</span>;</code></pre>
+
+<h2 id="g7-having">HAVING vs WHERE <span class="chip hot">★★ 자주 틀림</span></h2>
+<table class="t">
+  <tr><th></th><th>WHERE</th><th>HAVING</th></tr>
+  <tr><td>시점</td><td>집계 <strong>전</strong></td><td>집계 <strong>후</strong></td></tr>
+  <tr><td>위치</td><td>GROUP BY 앞</td><td>GROUP BY 뒤</td></tr>
+  <tr><td>쓸 수 있는 조건</td><td>일반 칼럼</td><td>집계함수, GROUPING()</td></tr>
+</table>
+<div class="warn"><strong>WHERE에 COUNT() 같은 집계함수 쓰면 오류!</strong> → HAVING으로 이동</div>
+</div>
+
+<!-- ═══════════ CH8 ═══════════ -->
+<div class="ch" id="ch8">
+<div class="ch-title">8장 — 조인 (Join)</div>
+<div class="ch-sub">INNER · LEFT/RIGHT OUTER · NATURAL · CROSS · UNION</div>
+
+<h2 id="g8-inner">INNER JOIN <span class="chip hot">★★</span></h2>
+<div class="tip">양쪽 테이블에 <strong>모두 존재</strong>하는 데이터만. 한쪽에 없으면 결과에서 제외.</div>
+<table class="t">
+  <tr><th>방법</th><th>예시</th></tr>
+  <tr><td>INNER JOIN + ON (권장)</td><td><code>FROM city a INNER JOIN country b ON a.countrycode = b.code</code></td></tr>
+  <tr><td>구식 쉼표 조인</td><td><code>FROM city a, country b WHERE a.countrycode = b.code</code></td></tr>
+  <tr><td>INNER 생략 가능</td><td><code>JOIN</code>만 써도 INNER JOIN으로 동작</td></tr>
+</table>
+
+<h2 id="g8-outer">OUTER JOIN <span class="chip hot">★★</span></h2>
+<table class="t">
+  <tr><th>종류</th><th>기준 테이블</th><th>반대쪽 없으면</th></tr>
+  <tr><td><code>LEFT JOIN</code></td><td>왼쪽(첫 번째)</td><td>NULL로 채움</td></tr>
+  <tr><td><code>RIGHT JOIN</code></td><td>오른쪽(두 번째)</td><td>NULL로 채움</td></tr>
+</table>
+<div class="tip">
+  <code>COUNT(*)</code> vs <code>COUNT(b.name)</code> 차이:<br>
+  COUNT(*)는 NULL 포함 전체 행 수 / COUNT(b.name)은 JOIN된 것(도시 있는 것)만
+</div>
+
+<h2 id="g8-etc">CROSS JOIN / NATURAL JOIN</h2>
+<table class="t">
+  <tr><th>종류</th><th>설명</th><th>주의</th></tr>
+  <tr><td>CROSS JOIN</td><td>모든 조합 = m × n 행</td><td><strong class="r">조인 조건 빠뜨리면 의도치 않게 발생!</strong></td></tr>
+  <tr><td>NATURAL JOIN</td><td>같은 칼럼명 자동 연결</td><td>칼럼명·타입 일치 필수. 실무에서 잘 안 씀.</td></tr>
+</table>
+
+<h2 id="g8-union">UNION <span class="chip hot">★★</span></h2>
+<div class="warn"><strong>필수 조건:</strong> 칼럼 수 동일 + 타입 동일 + ORDER BY는 맨 마지막에만</div>
+<table class="t">
+  <tr><th>구문</th><th>설명</th></tr>
+  <tr><td><code>UNION</code></td><td>중복 제거 후 합치기</td></tr>
+  <tr><td><code>UNION ALL</code></td><td>중복 포함 전체 (더 빠름)</td></tr>
+</table>
+<div class="tip">조인 = <strong>옆으로</strong>(칼럼 증가) / UNION = <strong>아래로</strong>(행 증가)</div>
+</div>
+
+<!-- ═══════════ CH9 ═══════════ -->
+<div class="ch" id="ch9">
+<div class="ch-title">9장 — 서브쿼리</div>
+<div class="ch-sub">스칼라 · 파생 테이블 · LATERAL · IN / EXISTS / ANY / ALL</div>
+
+<h2 id="g9-types">위치별 분류 <span class="chip hot">★★★</span></h2>
+<table class="t">
+  <tr><th>위치</th><th>이름</th><th>반환</th><th>핵심 제약</th></tr>
+  <tr><td>SELECT 절</td><td>스칼라 서브쿼리</td><td>단일 행·단일 값</td><td><strong class="r">여러 행 반환 시 오류!</strong></td></tr>
+  <tr><td>FROM 절</td><td>파생 테이블</td><td>여러 행·열 가능</td><td><strong class="r">별칭(AS) 필수!</strong></td></tr>
+  <tr><td>WHERE 절</td><td>조건 서브쿼리</td><td>연산자에 따라</td><td>IN / EXISTS / ANY / ALL</td></tr>
+</table>
+
+<h2 id="g9-scalar">스칼라 서브쿼리</h2>
+<pre><code><span class="cm">-- 각 도시마다 그 나라 이름을 SELECT에서 가져오기</span>
+<span class="kw">SELECT</span> a.name, a.population,
+       (<span class="kw">SELECT</span> b.name <span class="kw">FROM</span> country b <span class="kw">WHERE</span> a.countrycode = b.code) countryname
+<span class="kw">FROM</span> city a;
+<span class="cm">-- ❌ 오류: 서브쿼리에서 여러 칼럼 반환
+-- ❌ 오류: WHERE 조건 없어 여러 행 반환</span></code></pre>
+
+<h2 id="g9-derived">파생 테이블 (FROM 절)</h2>
+<div class="warn"><strong>별칭 없으면 오류!</strong> 반드시 <code>FROM (...) 별칭</code> 형태</div>
+<pre><code><span class="cm">-- 먼저 계산한 결과를 테이블처럼 사용</span>
+<span class="kw">SELECT</span> a.dept_no, a.dept_name, mng.emp_no
+<span class="kw">FROM</span> departments a,
+     (<span class="kw">SELECT</span> b.dept_no, b.emp_no, c.first_name
+        <span class="kw">FROM</span> dept_manager b, employees c
+       <span class="kw">WHERE</span> b.emp_no = c.emp_no
+         <span class="kw">AND</span> SYSDATE() <span class="kw">BETWEEN</span> b.from_date <span class="kw">AND</span> b.to_date
+     ) mng  <span class="cm">← 별칭 필수</span>
+<span class="kw">WHERE</span> a.dept_no = mng.dept_no;</code></pre>
+
+<h2 id="g9-lateral">LATERAL <span class="chip hot">★★ 시험 출제</span></h2>
+<table class="t">
+  <tr><th></th><th>일반 파생 테이블</th><th>LATERAL 파생 테이블</th></tr>
+  <tr><td>실행 방식</td><td>메인쿼리와 독립 실행</td><td>메인쿼리 행마다 함께 실행</td></tr>
+  <tr><td>바깥 테이블 참조</td><td class="r"><strong>❌ 불가 → 오류</strong></td><td><strong>✅ 가능</strong></td></tr>
+</table>
+<pre><code><span class="cm">-- ❌ 9-15: 서브쿼리 안에서 a.dept_no 참조 불가 → 오류</span>
+<span class="kw">FROM</span> departments a, (... <span class="kw">AND</span> a.dept_no = b.dept_no) mng
+
+<span class="cm">-- ✅ 9-16: LATERAL 붙이면 a.dept_no 참조 가능</span>
+<span class="kw">FROM</span> departments a, <span class="kw">LATERAL</span> (... <span class="kw">AND</span> a.dept_no = b.dept_no) mng</code></pre>
+
+<h2 id="g9-where">WHERE절 서브쿼리 — IN / EXISTS / ANY / ALL <span class="chip hot">★★★</span></h2>
+<table class="t">
+  <tr><th>연산자</th><th>의미</th><th>실질 동작</th></tr>
+  <tr><td><code>IN (...)</code></td><td>이 중에 있으면</td><td>—</td></tr>
+  <tr><td><code>NOT IN (...)</code></td><td>이 중에 없으면</td><td><strong class="r">서브쿼리에 NULL 있으면 결과 없음!</strong></td></tr>
+  <tr><td><code>EXISTS (...)</code></td><td>행이 하나라도 존재하면</td><td>보통 IN보다 빠름</td></tr>
+  <tr><td><code>&gt; ANY (...)</code></td><td>하나라도 크면 OK</td><td>= <code>&gt; MIN(...)</code> 쉬운 조건</td></tr>
+  <tr><td><code>&gt; ALL (...)</code></td><td>전부보다 커야 OK</td><td>= <code>&gt; MAX(...)</code> 까다로운 조건</td></tr>
+  <tr><td><code>&lt; ANY (...)</code></td><td>하나보다 작으면 OK</td><td>= <code>&lt; MAX(...)</code></td></tr>
+  <tr><td><code>&lt; ALL (...)</code></td><td>전부보다 작아야</td><td>= <code>&lt; MIN(...)</code></td></tr>
+</table>
+<div class="warn">
+  <strong>암기:</strong> ANY = 가장 <strong>작은</strong> 값 기준 (MIN) / ALL = 가장 <strong>큰</strong> 값 기준 (MAX)
+</div>
+</div>
+
+<!-- ═══════════ CH10 ═══════════ -->
+<div class="ch" id="ch10">
+<div class="ch-title">10장 — DML & 트랜잭션</div>
+<div class="ch-sub">INSERT · UPDATE · DELETE · TRUNCATE · COMMIT · ROLLBACK · SAVEPOINT</div>
+
+<h2 id="g10-insert">INSERT</h2>
+<table class="t">
+  <tr><th>방식</th><th>구문</th></tr>
+  <tr><td>단일 행</td><td><code>INSERT INTO t (c1,c2) VALUES (v1,v2)</code></td></tr>
+  <tr><td>다중 행</td><td><code>VALUES (v1,v2), (v3,v4), ...</code></td></tr>
+  <tr><td>SELECT 결과 삽입</td><td><code>INSERT INTO t SELECT ... FROM ... WHERE ...</code></td></tr>
+  <tr><td>있으면 수정·없으면 삽입</td><td><code>INSERT ... ON DUPLICATE KEY UPDATE 칼럼=값</code></td></tr>
+</table>
+<div class="warn">NOT NULL 칼럼 빠뜨리면 오류 / PK 중복 넣으면 오류</div>
+
+<h2 id="g10-update">UPDATE</h2>
+<div class="warn"><strong>WHERE 없으면 전체 행이 수정됨!</strong></div>
+<table class="t">
+  <tr><th>방식</th><th>구문 패턴</th></tr>
+  <tr><td>단일 테이블</td><td><code>UPDATE t SET c1=v1, c2=v2 WHERE 조건</code></td></tr>
+  <tr><td>다중 테이블</td><td><code>UPDATE t1 a, t2 b SET a.c1=b.c2 WHERE a.id=b.id</code></td></tr>
+  <tr><td>ORDER BY 가능</td><td><code>UPDATE t SET ... WHERE ... ORDER BY c DESC</code></td></tr>
+</table>
+
+<h2 id="g10-delete">DELETE vs TRUNCATE vs DROP <span class="chip hot">★★★</span></h2>
+<table class="t">
+  <tr><th></th><th>DELETE</th><th>TRUNCATE</th><th>DROP</th></tr>
+  <tr><td>분류</td><td>DML</td><td><strong>DDL</strong></td><td><strong>DDL</strong></td></tr>
+  <tr><td>범위</td><td>WHERE로 일부 가능</td><td>전체만</td><td>테이블 자체 삭제</td></tr>
+  <tr><td>ROLLBACK</td><td><strong>✅ 가능</strong></td><td class="r"><strong>❌ 불가</strong></td><td class="r"><strong>❌ 불가</strong></td></tr>
+  <tr><td>속도</td><td>느림</td><td>빠름</td><td>—</td></tr>
+</table>
+<div class="warn">DDL은 자동 COMMIT → ROLLBACK 불가!</div>
+<pre><code><span class="cm">-- ORDER BY + LIMIT 조합 가능</span>
+<span class="kw">DELETE FROM</span> emp <span class="kw">WHERE</span> emp_name='홍길동' <span class="kw">ORDER BY</span> emp_no <span class="kw">DESC LIMIT</span> 1;
+
+<span class="cm">-- 다중 테이블 삭제</span>
+<span class="kw">DELETE</span> a, b <span class="kw">FROM</span> t1 a, t2 b <span class="kw">WHERE</span> a.id = b.id;</code></pre>
+
+<h2 id="g10-tran">트랜잭션 <span class="chip hot">★★★</span></h2>
+<table class="t">
+  <tr><th>명령어</th><th>의미</th></tr>
+  <tr><td><code>COMMIT</code></td><td>영구 반영</td></tr>
+  <tr><td><code>ROLLBACK</code></td><td>전부 취소 (마지막 COMMIT 시점으로)</td></tr>
+  <tr><td><code>SAVEPOINT 이름</code></td><td>중간 저장점 설정</td></tr>
+  <tr><td><code>ROLLBACK TO SAVEPOINT 이름</code></td><td>그 지점 이후만 취소</td></tr>
+  <tr><td><code>START TRANSACTION</code></td><td>자동커밋 있어도 수동 트랜잭션 시작</td></tr>
+</table>
+
+<div class="warn">
+  <strong>AUTOCOMMIT = 1 (기본)</strong>이면 DML 즉시 자동 커밋 → ROLLBACK 불가<br>
+  <code>START TRANSACTION</code> 또는 <code>SET autocommit=0</code>으로 해제해야 ROLLBACK 가능
+</div>
+
+<pre><code><span class="kw">START TRANSACTION</span>;
+<span class="kw">SAVEPOINT</span> A;
+<span class="kw">DELETE FROM</span> emp_tran1 <span class="kw">WHERE</span> salary <span class="kw">IS NULL</span>;  <span class="cm">-- 작업1</span>
+<span class="kw">SAVEPOINT</span> B;
+<span class="kw">DELETE FROM</span> emp_tran1 <span class="kw">WHERE</span> emp_name='홍길동' <span class="kw">LIMIT</span> 1;  <span class="cm">-- 작업2</span>
+<span class="kw">ROLLBACK TO SAVEPOINT</span> B;  <span class="cm">-- 작업2만 취소, 작업1은 유지</span>
+<span class="kw">COMMIT</span>;                   <span class="cm">-- 작업1 영구 반영</span></code></pre>
+</div>
+
+<!-- ═══════════ 최종 암기표 ═══════════ -->
+<div class="ch" id="final">
+<div class="ch-title">⚡ 최종 암기표</div>
+<div class="ch-sub">시험 전 10분용</div>
+
+<table class="t final">
+  <tr><th>개념</th><th>핵심 규칙</th><th>함정 포인트</th></tr>
+  <tr><td>GROUP BY</td><td>SELECT = GROUP BY 칼럼 + 집계함수만</td><td>다른 칼럼 섞으면 오류</td></tr>
+  <tr><td>WHERE vs HAVING</td><td>WHERE=집계 전 / HAVING=집계 후</td><td>WHERE에 COUNT() → 오류</td></tr>
+  <tr><td>WITH ROLLUP</td><td>총계 행 자동 추가, 총계=NULL</td><td>GROUPING()으로 구분</td></tr>
+  <tr><td>COUNT(*) vs COUNT(c)</td><td>* = NULL 포함 / c = NULL 제외</td><td>LEFT JOIN + COUNT 조합 주의</td></tr>
+  <tr><td>INNER JOIN</td><td>양쪽 다 있는 것만</td><td>INNER 생략 가능</td></tr>
+  <tr><td>LEFT/RIGHT JOIN</td><td>기준쪽은 전부, 반대는 NULL</td><td>테이블 순서 바꾸면 서로 전환 가능</td></tr>
+  <tr><td>CROSS JOIN</td><td>m × n 행</td><td>조인 조건 빠뜨리면 자동 발생</td></tr>
+  <tr><td>UNION</td><td>칼럼 수·타입 일치, ORDER BY 마지막만</td><td>UNION ALL이 더 빠름</td></tr>
+  <tr><td>스칼라 서브쿼리</td><td>SELECT절, 단일값만</td><td>여러 행 반환 시 오류</td></tr>
+  <tr><td>파생 테이블</td><td>FROM절, 별칭 필수</td><td>별칭 없으면 오류</td></tr>
+  <tr><td>LATERAL</td><td>서브쿼리 안에서 바깥 테이블 참조</td><td>없으면 오류</td></tr>
+  <tr><td>&gt; ANY</td><td>= &gt; MIN (쉬운 조건)</td><td>ANY=작은값, ALL=큰값</td></tr>
+  <tr><td>&gt; ALL</td><td>= &gt; MAX (까다로운 조건)</td><td>—</td></tr>
+  <tr><td>NOT IN</td><td>서브쿼리에 NULL 있으면 결과 없음</td><td>NOT EXISTS가 안전</td></tr>
+  <tr><td>INSERT</td><td>NOT NULL 누락·PK 중복 → 오류</td><td>ON DUPLICATE KEY로 upsert</td></tr>
+  <tr><td>UPDATE / DELETE</td><td>WHERE 없으면 전체!</td><td>—</td></tr>
+  <tr><td>DELETE vs TRUNCATE</td><td>DELETE=ROLLBACK 가능 / TRUNCATE=불가</td><td>TRUNCATE는 DDL = 자동COMMIT</td></tr>
+  <tr><td>AUTOCOMMIT</td><td>기본 1 = 자동커밋</td><td>START TRANSACTION으로 수동 전환</td></tr>
+  <tr><td>SAVEPOINT</td><td>부분 ROLLBACK 가능</td><td>ROLLBACK TO SAVEPOINT 이름</td></tr>
+</table>
+
+<div style="margin-top:24px; padding:16px; border:2px solid #111; border-radius:4px; background:#f9f9f9;">
+  <strong>쿼리 실행 순서 (SQL 처리 순서)</strong><br>
+  <code>FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY</code><br>
+  <br>
+  <strong>DDL vs DML 구분</strong><br>
+  DML (ROLLBACK 가능): <code>INSERT / UPDATE / DELETE</code><br>
+  DDL (ROLLBACK 불가, 자동COMMIT): <code>CREATE / ALTER / DROP / TRUNCATE</code>
+</div>
+</div>
+
+</main>
+</div>
+
+<script>
+const navLinks = document.querySelectorAll('nav a');
+window.addEventListener('scroll', () => {
+  let cur = '';
+  document.querySelectorAll('[id]').forEach(el => {
+    if (window.scrollY >= el.offsetTop - 80) cur = el.id;
+  });
+  navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#'+cur));
+});
+</script>
+</body>
+</html>
